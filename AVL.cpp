@@ -102,7 +102,7 @@ void exibirQuantidade() {
 }
 
 void exibir() {
-	exibirElementosArvore(raiz, 0);
+	exibirElementosArvore(raiz, 1);
 }
 
 void buscar() {
@@ -204,17 +204,43 @@ NO* insereArvore(NO* no, int valor)
 
 }
 
-NO* girarDireita(NO* no)
+NO* girarDireita(NO* r)
 {
-	// sua implementação vai aqui
-	return no;
+	NO *y, *f;
+	y =r->esq;
+	f = y->dir;
+
+	y->dir =r;
+	r->esq= f;
+
+	r->altura = max(alturaNo(r->esq), alturaNo(r->dir)) + 1;
+	y->altura = max(alturaNo(y->esq), alturaNo(y->dir)) + 1;
+
+	return y;
 }
 
-NO* girarEsquerda(NO* no)
+NO* girarEsquerda(NO* r)
 {
-	// sua implementação vai aqui
-	return no;
+	NO* y, * f;
+		y = r->dir;
+		f = y->esq;
+
+		y->esq = r;
+		r->dir = f;
+
+		r->altura = max(alturaNo(r->esq), alturaNo(r->dir)) + 1;
+		y->altura = max(alturaNo(y->esq), alturaNo(y->dir)) + 1;
+
+	return y;
 }
+
+NO* rotacaoDireitaEsquerda(NO* r) {
+	r->dir = girarDireita(r->dir);
+	return girarEsquerda(r);
+}
+
+
+
 
 int elementosArvore(NO* no)
 {
@@ -228,15 +254,15 @@ int elementosArvore(NO* no)
 
 // simula a hierarquia da arvore usando espacos e exibe os elementos 
 // horizontalmente 
-void exibirElementosArvore(NO* no, int qtEspacos)
+void exibirElementosArvore(NO* raiz, int nivel)
 {
-	const int espaco = 4;
+	/* const int espaco = 4;
 
 	if (no == NULL) {
 		return;
 	}
 	qtEspacos += espaco;
-
+	
 	//exibe a subarvore da direita
 	exibirElementosArvore(no->dir, qtEspacos);
 	cout << endl;
@@ -249,7 +275,20 @@ void exibirElementosArvore(NO* no, int qtEspacos)
 
 	//exibe a subarvore da esquerda
 	exibirElementosArvore(no->esq, qtEspacos);
+	*/
 
+	int i;
+	if (raiz) {
+		exibirElementosArvore(raiz->dir, nivel + 1);
+		cout << "\n\n";
+
+		for ( i = 0; i < nivel; i++)
+		{
+			cout << "\t";
+		}
+		cout << raiz->valor;
+		exibirElementosArvore(raiz->esq, nivel + 1);
+	}
 }
 
 void buscarElementoArvore(NO* no, int valor)
