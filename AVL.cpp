@@ -19,6 +19,7 @@ void inserir();
 void exibir();
 void exibirQuantidade();
 void buscar();
+void remover();
 
 
 
@@ -28,6 +29,7 @@ NO* criaNO(int valor);
 int elementosArvore(NO* no);
 void exibirElementosArvore(NO* no, int qtespacos);
 void buscarElementoArvore(NO* no, int valor);
+void removerElementoArvore(NO* no, int valor);
 //--------------------------
 
 // funcoes auxiliares balaceamento
@@ -47,7 +49,7 @@ int main()
 void menu()
 {
 	int op = 0;
-	while (op != 6) {
+	while (op != 7) {
 		system("cls"); // somente no windows
 		cout << "Menu Arvore";
 		cout << endl << endl;
@@ -56,7 +58,8 @@ void menu()
 		cout << "3 - Inserir elemento \n";
 		cout << "4 - Exibir elementos \n";
 		cout << "5 - Buscar elemento \n";
-		cout << "6 - Sair \n";
+		cout << "6 - Remover Elemento \n";
+		cout << "7 - Sair \n";
 
 		cout << "Opcao: ";
 		cin >> op;
@@ -72,6 +75,8 @@ void menu()
 		case 4: exibir();
 			break;
 		case 5: buscar();
+			break;
+		case 6: remover();
 			break;
 		default:
 			break;
@@ -110,6 +115,15 @@ void buscar() {
 	cout << "Digite o elemento: ";
 	cin >> valor;
 	buscarElementoArvore(raiz, valor);
+}
+
+void remover() {
+
+	int valor;
+	cout << "Digite o elemento: ";
+	cin >> valor;
+
+	removerElementoArvore(raiz, valor);
 }
 
 
@@ -335,7 +349,66 @@ NO* buscarElementoArvoreComPai(NO* no, int valor, NO*& pai)
 	return NULL;
 }
 
+void removerElementoArvore(NO* no, int valor) {
+	NO* pai = NULL;
+	NO* atual = buscarElementoArvoreComPai(no, valor, pai);
+	if (atual == NULL) {
+		cout << "Elemento nao encontrado \n";
+		return;
+	}
 
+	// caso 1: sem filhos	
+	if (atual->esq == NULL && atual->dir == NULL) {
+		if (pai == NULL) {
+			raiz = NULL;
+		}
+		else if (pai->esq == atual) {
+			pai->esq = NULL;
+		}
+		else {
+			pai->dir = NULL;
+		}
+		free(atual);
+		cout << "Elemento removido\n";
+		return;
+	}
+
+	// caso 2: um filho	
+	if (atual->esq == NULL || atual->dir == NULL) {
+		NO* filho = (atual->esq != NULL) ? atual->esq : atual->dir;
+		if (pai == NULL) {
+			raiz = filho;
+		}
+		else if (pai->esq == atual) {
+			pai->esq = filho;
+		}
+		else {
+			pai->dir = filho;
+		}
+		free(atual);
+		cout << "Elemento com 1 filho removido: " << valor << endl;
+		return;
+	}
+
+	// caso 3: dois filhos
+	NO* aux = atual->dir;
+	NO* paiAux = atual;
+	while (aux->esq != NULL) {
+		paiAux = aux;
+		aux = aux->esq;
+	}
+
+	atual->valor = aux->valor;
+	if (paiAux == atual) {
+		paiAux->dir = aux->dir;
+	}
+	else {
+		paiAux->esq = aux->dir;
+	}
+
+	free(aux);
+	cout << "Elemento trocado: " << valor << endl;
+}
 
 
 
